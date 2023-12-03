@@ -1,18 +1,93 @@
 import { input as puzzleInput } from './input';
 
+const digitsAsStrings = [
+	{
+		digit: "one",
+		index: 1,
+	},
+	{
+		digit: "two",
+		index: 2,
+	},
+	{
+		digit: "three",
+		index: 3,
+	},
+	{
+		digit: "four",
+		index: 4,
+	},
+	{
+		digit: "five",
+		index: 5,
+	},
+	{
+		digit: "six",
+		index: 6,
+	},
+	{
+		digit: "seven",
+		index: 7,
+	},
+	{
+		digit: "eight",
+		index: 8,
+	},
+	{
+		digit: "nine",
+		index: 9,
+	},
+];
+
+type CodeEntry = {
+	digit: number;
+	index: number;
+}
+
 export const getCodeFromString = (str: string): number | null => {
-	const characters = str.split("");
+	const entries = [] as CodeEntry[];
+	str.split("").forEach((char, index) => {
+		const digit = Number(char);
+		if (!isNaN(digit)) {
+			entries.push({
+				digit,
+				index,
+			});
+		}
+	});
 
-	const numbers = characters.filter(char => !isNaN(Number(char))).map(Number);
+	const hasStringDigits = digitsAsStrings.some(({ digit }) => str.includes(digit));
 
-	if (numbers.length > 0) {
-		const firstNumber = numbers[0];
-		const lastNumber = numbers[numbers.length - 1];
+	if ( hasStringDigits ) {
+		digitsAsStrings.forEach(({ digit, index }) => {
+			let regexMatch;
 
-		return Number(`${firstNumber}${lastNumber}`);
+			const regex = new RegExp(digit, "g");
+
+
+			while (regexMatch = regex.exec(str)) {
+				entries.push({
+					digit: index,
+					index: regexMatch.index,
+				});
+			}
+		});
 	}
 
-	return null;
+	if (entries.length === 0) {
+		return null;
+	}
+
+
+	const sortedEntries = entries.sort((a, b) => a.index - b.index);
+
+	const numbers = sortedEntries.map(({ digit }) => digit);
+
+	const firstNumber = numbers[0];
+	const lastNumber = numbers[numbers.length - 1];
+
+
+	return Number(`${firstNumber}${lastNumber}`);
 };
 
 

@@ -18,6 +18,14 @@ describe("getCodeFromString", () => {
 	test("Returns null if no numbers are found", () => {
 		expect(getCodeFromString("asdf")).toBe(null)
 	})
+
+	test("Handles numbers as strings", () => {
+		expect(getCodeFromString("oneasdasd223")).toBe(13)
+	})
+
+	test("Handles numbers as strings", () => {
+		expect(getCodeFromString("oneseven7nine")).toBe(19)
+	})
 })
 
 describe ("getNumbers", () => {
