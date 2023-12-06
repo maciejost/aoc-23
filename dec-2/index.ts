@@ -24,7 +24,6 @@ const parseRound = (round: string): Round => {
 
   colors.forEach((color) => {
     const [number, colorName] = color.split(" ");
-		console.log(color)
     if (colorName === "green") {
       green += Number(number);
     } else if (colorName === "blue") {
@@ -83,6 +82,36 @@ const validGameIndexes = parsedInput.map((game, index) => {
 	return 0;
 })
 
+const validGames = parsedInput.filter((game) => isGameValid(game));
+
+
+
+const findLowestPossible = (game: Game) => {
+  const { rounds } = game;
+  const redAmounts = rounds.map((round) => round.red);
+  const greenAmounts = rounds.map((round) => round.green);
+  const blueAmounts = rounds.map((round) => round.blue);
+
+  const lowestRed = Math.max(...redAmounts);
+  const lowestGreen = Math.max(...greenAmounts);
+  const lowestBlue = Math.max(...blueAmounts);
+
+  const result = lowestRed * lowestGreen * lowestBlue;
+
+  return result;
+};
+
+let lowestSum = 0;
+
+parsedInput.forEach((game) => {
+  const result = findLowestPossible(game);
+  lowestSum += result;
+
+});
+
+console.log(lowestSum);
+
+
+
 const validGameSum = validGameIndexes.reduce((acc, curr) => acc + curr, 0);
 
-console.log(validGameSum);

@@ -7,7 +7,6 @@ describe('parseInput', () => {
     const input = 'Game 1: 1 green, 2 blue, 3 red;\nGame 2: 4 green, 5 blue, 6 red';
     const result = parseInput(input);
 
-		console.log(JSON.stringify(result));
     expect(result).toEqual([
         { rounds: [{ green: 1, blue: 2, red: 3 }] },
         { rounds: [{ green: 4, blue: 5, red: 6 }] },
