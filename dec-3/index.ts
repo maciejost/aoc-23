@@ -1,5 +1,16 @@
 import { input as input } from './input';
 
+/* const input = `467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..`
+ */
 const lines = input.split("\n");
 
 const IGNROED_CHARS = [
@@ -39,6 +50,7 @@ const numbers = [] as {
 	number: number,
 	lineIndex: number,
 	charIndex: number
+	originalChar: typeof symbols[0]
 }[]
 
 
@@ -112,7 +124,7 @@ for (let i =0; i < symbols.length; i++) {
 		const {lineIndex, charIndex} = positions[key];
 		const number = findWholeNumber(charIndex, lines[lineIndex]);
 
-		numbers.push({number: Number(number.wholeNumber), lineIndex, charIndex: number.startIndex});
+		numbers.push({number: Number(number.wholeNumber), lineIndex, charIndex: number.startIndex, originalChar: symbol});
 	})
 }
 
@@ -133,7 +145,76 @@ function removeDuplicates(arr: typeof numbers): typeof numbers {
 }
 
 const filteredNumbers = removeDuplicates(numbers);
-console.log('filteredNumbers', filteredNumbers)
+/* console.log('filteredNumbers', filteredNumbers) */
 
 const sum = filteredNumbers.reduce((acc, curr) => acc + curr.number, 0);
-console.log('sum', sum);
+/* console.log('sum', sum); */
+
+function findObjectsWithSameOriginalChar(arr: typeof filteredNumbers): typeof filteredNumbers[] {
+	const result: typeof filteredNumbers = [];
+
+	// Create a Map to store objects based on originalChar
+	const originalCharMap = new Map<string, typeof filteredNumbers>();
+
+	// Iterate through the array and group objects by originalChar
+	arr.forEach((obj) => {
+		if (obj.originalChar.char === "*") {
+			const key = `${obj.originalChar.char}-${obj.originalChar.lineIndex}`;
+			if (!originalCharMap.has(key)) {
+					originalCharMap.set(key, []);
+			}
+			originalCharMap.get(key)?.push(obj);
+	}
+	});
+
+	// Iterate through the Map and add groups with more than one object to the result
+	originalCharMap.forEach((group) => {
+			if (group.length > 1) {
+					result.push(...group);
+			}
+	});
+
+	const groupedBySameChar = new Map<string, typeof filteredNumbers>();
+
+	result.forEach((obj) => {
+		const key = `${obj.originalChar.char}-${obj.originalChar.lineIndex}`;
+		if (!groupedBySameChar.has(key)) {
+				groupedBySameChar.set(key, []);
+		}
+		groupedBySameChar.get(key)?.push(obj);
+	});
+
+	const groupedResult: typeof filteredNumbers[] = [];
+
+	groupedBySameChar.forEach((group) => {
+			if (group.length > 1) {
+				groupedResult.push(group);
+			}
+	});
+
+
+	return groupedResult;
+}
+const sameOriginator = findObjectsWithSameOriginalChar(filteredNumbers);
+
+console.log('sameOriginator', sameOriginator);
+
+let ratioSum = 0;
+
+const calculateRatio = sameOriginator.map((group) => {
+	if(group.length !== 2) return;
+
+	const {number: firstNumber} = group[0];
+	const {number: secondNumber} = group[1];
+
+	console.log(firstNumber, secondNumber);
+
+	const ratio = firstNumber * secondNumber;
+
+
+	ratioSum += ratio;
+
+	return ratio;
+});
+
+console.log('ratioSum', ratioSum);
